@@ -1,35 +1,33 @@
 package com.example.todolist.viewmodel
 
-import androidx.lifecycle.LiveData
-import com.example.todolist.database.TaskDatabase
-import com.example.todolist.model.Task
-import com.example.todolist.model.TaskDao
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.todolist.data.*
+import com.example.todolist.database.TaskDatabase
+import com.example.todolist.model.Task
 import kotlinx.coroutines.launch
 
-class TaskViewModel(application: Application): AndroidViewModel(application){
-    private val taskDao: TaskDao = TaskDatabase.getInstance(application).taskDao()
+class TaskViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository: TaskRepository
+    val allTasks = TaskDatabase.getDatabase(application).taskDao().getAll().asLiveData()
 
-    val allTasks : LiveData<List<Task>> = taskDao.getAllTasks()
-
-    fun insert(task: Task)= viewModelScope.launch{
-        taskDao.insert(task)
+    init {
+        val dao = TaskDatabase.getDatabase(application).taskDao()
+        val localSource = LocalDataSource(dao)
+        repository = TaskRepositoryImpl(localSource, RetrofitClient.api)
     }
 
-    fun deleteAll() = viewModelScope.launch{
-        taskDao.deleteAllTasks()
-    }
-    fun toggleTaskCompletion(position: Int){
-        // get the task by ID using the position as the identifier of the task
-        val task = taskDao.getTaskById(position)
-
-        // update the task
-        taskDao.update(task)
+    fun insert(task: Task) = viewModelScope.launch {
+        repository.addTask(task)
     }
 
-    fun onTaskCheckedChanged(){
+    fun delete(task: Task) = viewModelScope.launch {
+        repository.deleteTask(task)
+    }
 
+    fun sync() = viewModelScope.launch {
+        repository.syncTasks()
     }
 }
