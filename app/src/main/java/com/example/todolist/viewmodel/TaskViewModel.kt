@@ -27,6 +27,25 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         repository.deleteTask(task)
     }
 
+    fun update(task: Task) = viewModelScope.launch {
+        repository.updateTask(task)
+    }
+
+    fun toggleTaskCompletion(position: Int) = viewModelScope.launch {
+        allTasks.value?.let { tasks ->
+            if (position < tasks.size) {
+                val task = tasks[position]
+                val updatedTask = task.copy(isCompleted = !(task.isCompleted ?: false))
+                repository.updateTask(updatedTask)
+            }
+        }
+    }
+
+    fun onTaskCheckedChanged(task: Task, position: Int) = viewModelScope.launch {
+        val updatedTask = task.copy(isCompleted = !(task.isCompleted ?: false))
+        repository.updateTask(updatedTask)
+    }
+
     fun sync() = viewModelScope.launch {
         repository.syncTasks()
     }

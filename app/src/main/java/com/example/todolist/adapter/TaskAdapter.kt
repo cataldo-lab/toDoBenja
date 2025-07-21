@@ -36,10 +36,13 @@ class TaskAdapter(private val viewModel: TaskViewModel): RecyclerView.Adapter<Ta
             binding.position = position
             binding.viewModel = viewModel
 
+            // Remover listener anterior para evitar loops
             binding.checkBox.setOnCheckedChangeListener(null)
-            binding.checkBox.isChecked = item.isCompleted
-            binding.checkBox.setOnCheckedChangeListener{ _, isChecked ->
-                viewModel.toggleTaskCompletion(binding.position)
+            binding.checkBox.isChecked = item.isCompleted ?: false
+
+            // Configurar el listener para cambios
+            binding.checkBox.setOnCheckedChangeListener { _, _ ->
+                viewModel.onTaskCheckedChanged(item, position)
             }
 
             binding.executePendingBindings()

@@ -29,12 +29,21 @@ class MainActivity : ComponentActivity() {
 
         // Botón para agregar tarea localmente
         binding.buttonAddtask.setOnClickListener {
-            val newTask = Task(
-                title = binding.taskTitle.text.toString(),
-                description = binding.taskDescription.text.toString(),
-                isCompleted = false
-            )
-            viewModel.insert(newTask)
+            val title = binding.taskTitle.text.toString().trim()
+            val description = binding.taskDescription.text.toString().trim()
+
+            if (title.isNotEmpty()) {
+                val newTask = Task(
+                    title = title,
+                    description = description,
+                    isCompleted = false
+                )
+                viewModel.insert(newTask)
+
+                // Limpiar campos
+                binding.taskTitle.text.clear()
+                binding.taskDescription.text.clear()
+            }
         }
 
         // Disparar sincronización con API al iniciar
@@ -46,6 +55,7 @@ class MainActivity : ComponentActivity() {
         val adapter = TaskAdapter(viewModel)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
+
         viewModel.allTasks.observe(this) { allTasks ->
             adapter.setItems(allTasks)
         }
