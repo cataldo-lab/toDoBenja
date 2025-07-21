@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.todolist"
-        minSdk = 35
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -45,7 +45,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -65,8 +64,14 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Room
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     testImplementation("androidx.room:room-testing:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
+
+    // WorkManager y Retrofit desde TOML
+    implementation(libs.work.runtime)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
 }
