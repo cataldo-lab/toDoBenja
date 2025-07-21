@@ -41,8 +41,8 @@ class MainActivity : ComponentActivity() {
                 viewModel.insert(newTask)
 
                 // Limpiar campos
-                binding.taskTitle.text.clear()
-                binding.taskDescription.text.clear()
+                binding.taskTitle.text?.clear()
+                binding.taskDescription.text?.clear()
             }
         }
 
